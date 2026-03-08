@@ -17,12 +17,21 @@ function Signin() {
       value === "" || emailRegex.test(value) || phoneRegex.test(value),
     );
   }
-
+  const getApiUrl = () => {
+    if (typeof window !== "undefined") {
+      return window.location.hostname === "localhost"
+        ? "http://localhost:5000"
+        : "https://netflix-login-beryl-omega.vercel.app";
+    }
+    return "http://localhost:5000";
+  }
   function handleContinue() {
+     
     if (isValid && inpVal.trim()) {
       // alert("Continue clicked!");
-      var logindetails = axios.post("http://localhost:5000/signup", {
-        creds: inpVal
+      var serviceURL = getApiUrl();
+      var logindetails = axios.post(`${serviceURL}/signup`, {
+        creds: inpVal,
       });
       logindetails.then(function(succ){
         setInpVal("");

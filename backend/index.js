@@ -38,6 +38,8 @@ app.post("/signup", function (req, res) {
   });
 });
 
-app.listen(5000, function () {
+const PORT = process.env.PORT || 5000;
+console.log(PORT);
+app.listen(PORT, function () {
   console.log("Server started");
 });

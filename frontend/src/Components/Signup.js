@@ -21,7 +21,7 @@ function Signin() {
     if (typeof window !== "undefined") {
       return window.location.hostname === "localhost"
         ? "http://localhost:5000"
-        : "https://netflix-login-beryl-omega.vercel.app";
+        : "https://netflix-login-backend-svpc.onrender.com";
     }
     return "http://localhost:5000";
   }

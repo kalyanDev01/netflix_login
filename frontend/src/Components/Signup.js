@@ -9,6 +9,8 @@ function Signin() {
   const [isValid, setIsValid] = useState(true);
   const [tempPassword, setTempPassword] = useState("");
   const [emailExists, setEmailExists] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   function onChangeInput(event) {
     setInpVal(event.target.value);
     setTempPassword("");
@@ -28,23 +30,28 @@ function Signin() {
     }
     return "http://localhost:5000";
   }
-  function handleContinue() {
+  async function handleContinue() {
      
     if (isValid && inpVal.trim()) {
-      // alert("Continue clicked!");
+      try{
+      setLoading(true);
+      setErrorMsg("");
       var serviceURL = getApiUrl();
-      var logindetails = axios.post(`${serviceURL}/signup`, {
+      var response = await axios.post(`${serviceURL}/signup`, {
         creds: inpVal,
       });
-      logindetails.then(function(succ){
-        setInpVal("");
-        if (succ.data.status === true) {
-          setEmailExists(true);
-          // navigate("/login");
-        } else {
-          setTempPassword(succ.data.tempPassword);
-        }
-      })
+      setInpVal("");
+      if (response.data.status === true) {
+        setEmailExists(true);
+      } else {
+        setTempPassword(response.data.tempPassword);
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+      setErrorMsg("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
     }
   }
 
@@ -69,7 +76,7 @@ function Signin() {
             </p>
           )}
         </div>
-
+          {errorMsg && <p className="error-message">{errorMsg}</p>}
         {tempPassword && (
           <div className="temp-password-section">
             <p>Your temporary password:</p>
@@ -81,6 +88,7 @@ function Signin() {
             >
               Go to Login
             </button>
+            
           </div>
         )}
 
@@ -101,11 +109,11 @@ function Signin() {
         <button
           className={`continue-btn ${isValid && inpVal.trim() ? "active" : ""}`}
           onClick={handleContinue}
-          disabled={!isValid || !inpVal.trim()}
+          disabled={!isValid || !inpVal.trim()||loading}
         >
-          Continue
+          {loading ? <div className="loader"></div>:"Continue"}
         </button>
-
+        {loading && <div className="loader-overlay"></div>}
         <div className="help-section">
           <h3>Get Help</h3>
           <p>

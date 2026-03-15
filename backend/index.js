@@ -43,3 +43,32 @@ console.log(PORT);
 app.listen(PORT, function () {
   console.log("Server started");
 });
+
+app.post("/signin", function (req, res) {
+  const creds = req.body.creds;
+  const password = req.body.password;
+
+  const user = arr.find((u) => u.creds === creds);
+  console.log(user);
+
+  if (!user) {
+    return res.json({
+      status: false,
+      msg: "User not found"
+    });
+  }
+
+  if (user.tempPassword === password) {
+    console.log("Success");
+    return res.json({
+      status: true,
+      msg: "Login successful"
+    });
+  } else {
+    console.log("login failure");
+    return res.json({
+      status: false,
+      msg: "Wrong temporary password"
+    });
+  }
+});

@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import "../style.css";
 import axios from "axios";
+import Header from "./Header";
+import { useNavigate } from "react-router-dom";
 function Signin() {
+  const navigate = useNavigate();
   const [inpVal, setInpVal] = useState("");
   const [isValid, setIsValid] = useState(true);
   const [tempPassword, setTempPassword] = useState("");
@@ -37,6 +40,7 @@ function Signin() {
         setInpVal("");
         if (succ.data.status === true) {
           setEmailExists(true);
+          // navigate("/login");
         } else {
           setTempPassword(succ.data.tempPassword);
         }
@@ -45,57 +49,72 @@ function Signin() {
   }
 
   return (
-    <div className="signin-container">
-      <h1 className="signin-title">Enter your info to sign in</h1>
-      <h3 className="signin-subtitle">Or get started with a new account.</h3>
+      <div className="signin-container">
+        <Header />
+        <h1 className="signin-title">Enter your info to sign in</h1>
+        <h3 className="signin-subtitle">Or get started with a new account.</h3>
 
-      <div className="input-wrapper">
-        <input
-          type="text"
-          placeholder="Email or mobile number"
-          value={inpVal}
-          name="creds"
-          className={`signin-input ${!isValid ? "invalid" : ""}`}
-          onChange={onChangeInput}
-        />
-        {!isValid && (
-          <p className="error-message">
-            Please enter a valid email or mobile number.
-          </p>
+        <div className="input-wrapper">
+          <input
+            type="text"
+            placeholder="Email or mobile number"
+            value={inpVal}
+            name="creds"
+            className={`signin-input ${!isValid ? "invalid" : ""}`}
+            onChange={onChangeInput}
+          />
+          {!isValid && (
+            <p className="error-message">
+              Please enter a valid email or mobile number.
+            </p>
+          )}
+        </div>
+
+        {tempPassword && (
+          <div className="temp-password-section">
+            <p>Your temporary password:</p>
+            <strong>{tempPassword}</strong>
+            <p>Use this to login and change your password.</p>
+            <button
+              className="continue-btn active"
+              onClick={() => navigate("/login")}
+            >
+              Go to Login
+            </button>
+          </div>
         )}
-      </div>
 
-      {tempPassword && (
-        <div className="temp-password-section">
-          <p>Your temporary password:</p>
-          <strong>{tempPassword}</strong>
-          <p>Use this to login and change your password.</p>
+        {/* Email already Exists Section */}
+        {emailExists && (
+          <div className="email-exists-section">
+            <p>This account already exists. Please login.</p>
+
+            <button
+              className="continue-btn active"
+              onClick={() => navigate("/login")}
+            >
+              Proceed to Login
+            </button>
+          </div>
+        )}
+
+        <button
+          className={`continue-btn ${isValid && inpVal.trim() ? "active" : ""}`}
+          onClick={handleContinue}
+          disabled={!isValid || !inpVal.trim()}
+        >
+          Continue
+        </button>
+
+        <div className="help-section">
+          <h3>Get Help</h3>
+          <p>
+            This page is protected by Google reCAPTCHA to ensure you're not a
+            bot.
+          </p>
+          <p>Learn more</p>
         </div>
-      )}
-
-      {/* Email Already Exists Section */}
-      {emailExists && (
-        <div className="email-exists-section">
-          <p>This account is already generated temporary password. Please login.</p>
-        </div>
-      )}
-
-      <button
-        className={`continue-btn ${isValid && inpVal.trim() ? "active" : ""}`}
-        onClick={handleContinue}
-        disabled={!isValid || !inpVal.trim()}
-      >
-        Continue
-      </button>
-
-      <div className="help-section">
-        <h3>Get Help</h3>
-        <p>
-          This page is protected by Google reCAPTCHA to ensure you're not a bot.
-        </p>
-        <p>Learn more</p>
       </div>
-    </div>
   );
 }
 
